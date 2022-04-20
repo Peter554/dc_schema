@@ -14,5 +14,7 @@ jobs:
         run: poetry install
       - name: Check code format
         run: poetry run black --check .
+      - name: Check types
+        run: poetry run mypy .
       - name: Run the tests
         run: poetry run pytest

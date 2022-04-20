@@ -15,21 +15,40 @@ def get_schema(dc):
     return _GetSchema()(dc)
 
 
+Format = t.Literal[
+    "date-time",
+    "time",
+    "date",
+    "duration",
+    "email",
+    "idn-email",
+    "hostname",
+    "idn-hostname",
+    "ipv4",
+    "ipv6",
+    "uuid",
+    "uri",
+    "uri-reference",
+    "iri",
+    "iri-reference",
+]
+
+
 def annotation(
     *,
-    title=None,
-    description=None,
-    examples=None,
-    deprecated=None,
-    min_length=None,
-    max_length=None,
-    pattern=None,
-    format=None,
-    minimum=None,
-    maximum=None,
-    exclusive_minimum=None,
-    exclusive_maximum=None,
-    multiple_of=None,
+    title: t.Optional[str] = None,
+    description: t.Optional[str] = None,
+    examples: t.Optional[list[t.Any]] = None,
+    deprecated: t.Optional[bool] = None,
+    min_length: t.Optional[int] = None,
+    max_length: t.Optional[int] = None,
+    pattern: t.Optional[str] = None,
+    format: t.Optional[Format] = None,
+    minimum: t.Optional[numbers.Number] = None,
+    maximum: t.Optional[numbers.Number] = None,
+    exclusive_minimum: t.Optional[numbers.Number] = None,
+    exclusive_maximum: t.Optional[numbers.Number] = None,
+    multiple_of: t.Optional[numbers.Number] = None,
 ):
     extra = {
         "title": title,

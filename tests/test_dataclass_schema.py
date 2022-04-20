@@ -100,9 +100,8 @@ def test_get_schema_union():
 @dataclasses.dataclass
 class DcNone:
     a: None
-    b: type(None)
-    c: t.Optional[int]
-    d: t.Union[None, int]
+    b: t.Optional[int]
+    c: t.Union[None, int]
 
 
 def test_get_schema_nullable():
@@ -115,11 +114,10 @@ def test_get_schema_nullable():
         "title": "DcNone",
         "properties": {
             "a": {"type": "null"},
-            "b": {"type": "null"},
-            "c": {"anyOf": [{"type": "integer"}, {"type": "null"}]},
-            "d": {"anyOf": [{"type": "null"}, {"type": "integer"}]},
+            "b": {"anyOf": [{"type": "integer"}, {"type": "null"}]},
+            "c": {"anyOf": [{"type": "null"}, {"type": "integer"}]},
         },
-        "required": ["a", "b", "c", "d"],
+        "required": ["a", "b", "c"],
     }
 
 
@@ -264,7 +262,7 @@ def test_get_schema_self_refs():
 
 @dataclasses.dataclass
 class DcLiteral:
-    a: t.Literal[1, "two", 3.0, None]
+    a: t.Literal[1, "two", 3, None]
     b: t.Literal[42, 43] = 42
 
 
@@ -277,7 +275,7 @@ def test_get_schema_literal():
         "type": "object",
         "title": "DcLiteral",
         "properties": {
-            "a": {"enum": [1, "two", 3.0, None]},
+            "a": {"enum": [1, "two", 3, None]},
             "b": {"enum": [42, 43], "default": 42},
         },
         "required": ["a"],

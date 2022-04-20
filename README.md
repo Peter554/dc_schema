@@ -170,5 +170,6 @@ See the [tests](https://github.com/Peter554/dataclass_schema/blob/master/tests/t
 
 For working with dataclasses or JSON schema:
 
-* https://python-jsonschema.readthedocs.io/en/stable/ - validate an object against a JSON schema.
 * https://github.com/konradhalas/dacite - create data classes from dictionaries.
+* https://python-jsonschema.readthedocs.io/en/stable/ - validate an object against a JSON schema.
+* https://json-schema.org/understanding-json-schema/index.html - nice reference for understanding JSON schema. 
