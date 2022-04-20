@@ -335,7 +335,7 @@ def test_get_schema_set():
 @dataclasses.dataclass
 class DcStrAnnotated:
     a: t.Annotated[str, annotation(min_length=3, max_length=5)]
-    b: t.Annotated[str, annotation(format="date", pattern=r"^\d.*")] = "2000-01-01"
+    b: t.Annotated[str, annotation(format_="date", pattern=r"^\d.*")] = "2000-01-01"
 
 
 def test_get_schema_str_annotation():
