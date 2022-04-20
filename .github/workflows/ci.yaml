@@ -17,7 +17,7 @@ jobs:
       - name: Check types
         run: poetry run mypy .
       - name: Run the tests
-        run: poetry run pytest --cov ./dc_schema/ --cov-report xml
+        run: poetry run pytest --cov dc_schema --cov-report term --cov-report xml
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
