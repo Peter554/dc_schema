@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "dataclass_schema"
+name = "dc_schema"
 version = "0.0.1"
-description = ""
+description = "Generate JSON schema from python dataclasses"
 authors = ["Peter Byfield <byfield554@gmail.com>"]
 license = "MIT"
 

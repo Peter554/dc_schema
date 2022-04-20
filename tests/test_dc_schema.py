@@ -7,7 +7,7 @@ import enum
 
 from jsonschema.validators import Draft202012Validator
 
-from dataclass_schema.dataclass_schema import (
+from dc_schema import (
     get_schema,
     annotation,
 )

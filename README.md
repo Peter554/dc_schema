@@ -1,10 +1,10 @@
-# dataclass_schema
+# dc_schema
 
 Generate [JSON schema](https://json-schema.org/) (2020-12) from python 
 [dataclasses](https://docs.python.org/3/library/dataclasses.html). No dependencies, standard library only.
 
 ```
-pip install dataclass_schema 
+pip install dc_schema 
 ```
 
 ## Assumptions
@@ -25,7 +25,7 @@ import dataclasses
 import datetime
 import json
 
-from dataclass_schema.dataclass_schema import get_schema
+from dc_schema import get_schema
 
 
 @dataclasses.dataclass
@@ -35,10 +35,12 @@ class Author:
     dob: datetime.date
     books: list[Book]
 
+
 @dataclasses.dataclass
 class Book:
     title: str
     published: bool = False
+
 
 print(json.dumps(get_schema(Author), indent=2))
 ```
@@ -101,7 +103,7 @@ print(json.dumps(get_schema(Author), indent=2))
 
 You can use [typing.Annotated](https://docs.python.org/3/library/typing.html#typing.Annotated) + `annotation` to attach
 metadata to the schema, such as field descriptions, examples, validation (min/max length, regex pattern, ...), etc. 
-Consult [the code](https://github.com/Peter554/dataclass_schema/blob/master/dataclass_schema/dataclass_schema.py) for full details.
+Consult [the code](https://github.com/Peter554/dc_schema/blob/master/dc_schema/__init__.py) for full details.
 
 ```py
 from __future__ import annotations
@@ -111,7 +113,7 @@ import datetime
 import json
 import typing as t
 
-from dataclass_schema.dataclass_schema import get_schema, annotation
+from dc_schema import get_schema, annotation
 
 
 @dataclasses.dataclass
@@ -119,6 +121,7 @@ class Author:
     name: t.Annotated[str, annotation(title="Full name", description="The authors full name")]
     age: t.Annotated[int, annotation(minimum=0)]
     dob: t.Annotated[t.Optional[datetime.date], annotation(examples=["1990-01-17"])] = None
+
 
 print(json.dumps(get_schema(Author), indent=2))
 ```
@@ -163,7 +166,7 @@ print(json.dumps(get_schema(Author), indent=2))
 
 ### Further examples
 
-See the [tests](https://github.com/Peter554/dataclass_schema/blob/master/tests/test_dataclass_schema.py) for full example usage.
+See the [tests](https://github.com/Peter554/dc_schema/blob/master/tests/test_dc_schema.py) for full example usage.
 
 
 ## Other tools
