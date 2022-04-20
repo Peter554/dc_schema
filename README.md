@@ -1,5 +1,8 @@
 # dc_schema
 
+[![CI](https://github.com/Peter554/dc_schema/actions/workflows/ci.yaml/badge.svg)](https://github.com/Peter554/dc_schema/actions/workflows/ci.yaml)
+[![codecov](https://codecov.io/gh/Peter554/dc_schema/branch/master/graph/badge.svg?token=YLT3N0HWO9)](https://codecov.io/gh/Peter554/dc_schema)
+
 Generate [JSON schema](https://json-schema.org/) (2020-12) from python 
 [dataclasses](https://docs.python.org/3/library/dataclasses.html). No dependencies, standard library only.
 
