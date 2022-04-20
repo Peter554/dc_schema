@@ -4,7 +4,7 @@ Generate [JSON schema](https://json-schema.org/) (2020-12) from python
 [dataclasses](https://docs.python.org/3/library/dataclasses.html). No dependencies, standard library only.
 
 ```
-pip install dc_schema 
+pip install dc-schema 
 ```
 
 ## Assumptions
