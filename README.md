@@ -13,7 +13,6 @@ pip install dc-schema
 ## Assumptions
 
 * python 3.9+
-* [`from __future__ import annotations`](https://peps.python.org/pep-0563/)
 
 ## Usage
 
@@ -22,14 +21,16 @@ pip install dc-schema
 Create a regular python dataclass and pass it to `get_schema`.
 
 ```py
-from __future__ import annotations
-
 import dataclasses
 import datetime
 import json
 
 from dc_schema import get_schema
 
+@dataclasses.dataclass
+class Book:
+    title: str
+    published: bool = False
 
 @dataclasses.dataclass
 class Author:
@@ -37,13 +38,6 @@ class Author:
     age: int
     dob: datetime.date
     books: list[Book]
-
-
-@dataclasses.dataclass
-class Book:
-    title: str
-    published: bool = False
-
 
 print(json.dumps(get_schema(Author), indent=2))
 ```
@@ -104,27 +98,23 @@ print(json.dumps(get_schema(Author), indent=2))
 
 ### Annotations
 
-You can use [typing.Annotated](https://docs.python.org/3/library/typing.html#typing.Annotated) + `annotation` to attach
+You can use [typing.Annotated](https://docs.python.org/3/library/typing.html#typing.Annotated) + `SchemaAnnotation` to attach
 metadata to the schema, such as field descriptions, examples, validation (min/max length, regex pattern, ...), etc. 
 Consult [the code](https://github.com/Peter554/dc_schema/blob/master/dc_schema/__init__.py) for full details.
 
 ```py
-from __future__ import annotations
-
 import dataclasses
 import datetime
 import json
 import typing as t
 
-from dc_schema import get_schema, annotation
-
+from dc_schema import get_schema, SchemaAnnotation
 
 @dataclasses.dataclass
 class Author:
-    name: t.Annotated[str, annotation(title="Full name", description="The authors full name")]
-    age: t.Annotated[int, annotation(minimum=0)]
-    dob: t.Annotated[t.Optional[datetime.date], annotation(examples=["1990-01-17"])] = None
-
+    name: t.Annotated[str, SchemaAnnotation(title="Full name", description="The authors full name")]
+    age: t.Annotated[int, SchemaAnnotation(minimum=0)]
+    dob: t.Annotated[t.Optional[datetime.date], SchemaAnnotation(examples=("1990-01-17",))] = None
 
 print(json.dumps(get_schema(Author), indent=2))
 ```
