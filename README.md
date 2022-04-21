@@ -114,7 +114,7 @@ from dc_schema import get_schema, SchemaAnnotation
 class Author:
     name: t.Annotated[str, SchemaAnnotation(title="Full name", description="The authors full name")]
     age: t.Annotated[int, SchemaAnnotation(minimum=0)]
-    dob: t.Annotated[t.Optional[datetime.date], SchemaAnnotation(examples=("1990-01-17",))] = None
+    dob: t.Annotated[t.Optional[datetime.date], SchemaAnnotation(examples=["1990-01-17"])] = None
 
 print(json.dumps(get_schema(Author), indent=2))
 ```

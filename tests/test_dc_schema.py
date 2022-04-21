@@ -432,7 +432,7 @@ class DcAnnotatedAuthor:
     name: t.Annotated[
         str,
         SchemaAnnotation(
-            description="the name of the author", examples=("paul", "alice")
+            description="the name of the author", examples=["paul", "alice"]
         ),
     ]
     books: t.Annotated[

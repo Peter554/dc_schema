@@ -37,7 +37,7 @@ _Format = t.Literal[
 class SchemaAnnotation:
     title: t.Optional[str] = None
     description: t.Optional[str] = None
-    examples: t.Optional[tuple[t.Any]] = None
+    examples: t.Optional[list[t.Any]] = None
     deprecated: t.Optional[bool] = None
     min_length: t.Optional[int] = None
     max_length: t.Optional[int] = None
@@ -57,9 +57,8 @@ class SchemaAnnotation:
             "exclusive_maximum": "exclusiveMaximum",
             "multiple_of": "multipleOf",
         }
-        value_map = {"examples": lambda v: v and list(v)}
         return {
-            key_map.get(k, k): value_map.get(k, lambda x: x)(v)
+            key_map.get(k, k): v
             for k, v in dataclasses.asdict(self).items()
             if v is not None
         }
