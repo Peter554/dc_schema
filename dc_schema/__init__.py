@@ -97,9 +97,14 @@ class _GetSchema:
             }
 
     def create_dc_schema(self, dc):
+        if hasattr(dc, "SchemaConfig"):
+            annotation = getattr(dc.SchemaConfig, "annotation", SchemaAnnotation())
+        else:
+            annotation = SchemaAnnotation()
         schema = {
             "type": "object",
             "title": dc.__name__,
+            **annotation.schema(),
             "properties": {},
             "required": [],
         }

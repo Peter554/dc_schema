@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dc_schema"
-version = "0.0.5"
+version = "0.0.6"
 description = "Generate JSON schema from python dataclasses"
 authors = ["Peter Byfield <byfield554@gmail.com>"]
 license = "MIT"

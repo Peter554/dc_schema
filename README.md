@@ -42,7 +42,7 @@ class Author:
 print(json.dumps(get_schema(Author), indent=2))
 ```
 
-```
+```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
@@ -119,7 +119,7 @@ class Author:
 print(json.dumps(get_schema(Author), indent=2))
 ```
 
-```
+```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
@@ -153,6 +153,41 @@ print(json.dumps(get_schema(Author), indent=2))
   "required": [
     "name",
     "age"
+  ]
+}
+```
+
+To customize the metadata of a dataclass itself, use a `SchemaConfig`.
+
+```py
+import dataclasses
+import json
+
+from dc_schema import get_schema, SchemaAnnotation
+
+@dataclasses.dataclass
+class User:
+    name: str
+
+    class SchemaConfig:
+        annotation = SchemaAnnotation(title="System user", description="A user of the system")
+
+print(json.dumps(get_schema(User), indent=2))
+```
+
+```json
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "System user",
+  "description": "A user of the system",
+  "properties": {
+    "name": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name"
   ]
 }
 ```

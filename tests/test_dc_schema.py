@@ -340,7 +340,7 @@ class DcStrAnnotated:
     ] = "2000-01-01"
 
 
-def test_get_schema_str_SchemaAnnotation():
+def test_get_schema_str_annotation():
     schema = get_schema(DcStrAnnotated)
     print(schema)
     Draft202012Validator.check_schema(schema)
@@ -371,7 +371,7 @@ class DcNumberAnnotated:
     ] = 33.1
 
 
-def test_get_schema_number_SchemaAnnotation():
+def test_get_schema_number_annotation():
     schema = get_schema(DcNumberAnnotated)
     print(schema)
     Draft202012Validator.check_schema(schema)
@@ -445,7 +445,7 @@ class DcAnnotatedAuthor:
     ] = 42
 
 
-def test_get_schema_SchemaAnnotation():
+def test_get_schema_annotation():
     schema = get_schema(DcAnnotatedAuthor)
     print(schema)
     Draft202012Validator.check_schema(schema)
@@ -486,5 +486,53 @@ def test_get_schema_SchemaAnnotation():
                 "title": "DcAnnotatedAuthorHobby",
                 "enum": ["chess", "soccer"],
             },
+        },
+    }
+
+
+@dataclasses.dataclass
+class DcSchemaConfigChild:
+    a: int
+
+    class SchemaConfig:
+        annotation = SchemaAnnotation(title="a child")
+
+
+@dataclasses.dataclass
+class DcSchemaConfig:
+    a: str
+    child_1: DcSchemaConfigChild
+    child_2: t.Annotated[DcSchemaConfigChild, SchemaAnnotation(title="2nd child")]
+    friend: t.Annotated[DcSchemaConfig, SchemaAnnotation(title="a friend")]
+
+    class SchemaConfig:
+        annotation = SchemaAnnotation(title="root model")
+
+
+def test_get_schema_config():
+    schema = get_schema(DcSchemaConfig)
+    print(schema)
+    Draft202012Validator.check_schema(schema)
+    assert schema == {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "title": "root model",
+        "properties": {
+            "a": {"type": "string"},
+            "child_1": {"allOf": [{"$ref": "#/$defs/DcSchemaConfigChild"}]},
+            "child_2": {
+                "allOf": [{"$ref": "#/$defs/DcSchemaConfigChild"}],
+                "title": "2nd child",
+            },
+            "friend": {"allOf": [{"$ref": "#"}], "title": "a friend"},
+        },
+        "required": ["a", "child_1", "child_2", "friend"],
+        "$defs": {
+            "DcSchemaConfigChild": {
+                "type": "object",
+                "title": "a child",
+                "properties": {"a": {"type": "integer"}},
+                "required": ["a"],
+            }
         },
     }
