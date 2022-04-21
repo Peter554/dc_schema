@@ -199,14 +199,14 @@ def test_get_schema_tuple():
 
 
 @dataclasses.dataclass
-class DcRefs:
-    a: DcRefsChild
-    b: list[DcRefsChild]
+class DcRefsChild:
+    c: str
 
 
 @dataclasses.dataclass
-class DcRefsChild:
-    c: str
+class DcRefs:
+    a: DcRefsChild
+    b: list[DcRefsChild]
 
 
 def test_get_schema_refs():
@@ -416,6 +416,16 @@ def test_get_schema_date_time():
 
 
 @dataclasses.dataclass
+class DcAnnotatedBook:
+    title: t.Annotated[str, annotation(title="Title")]
+
+
+class DcAnnotatedAuthorHobby(enum.Enum):
+    CHESS = "chess"
+    SOCCER = "soccer"
+
+
+@dataclasses.dataclass
 class DcAnnotatedAuthor:
     name: t.Annotated[
         str,
@@ -427,16 +437,6 @@ class DcAnnotatedAuthor:
     ]
     hobby: t.Annotated[DcAnnotatedAuthorHobby, annotation(deprecated=True)]
     age: t.Annotated[t.Union[int, float], annotation(description="age in years")] = 42
-
-
-@dataclasses.dataclass
-class DcAnnotatedBook:
-    title: t.Annotated[str, annotation(title="Title")]
-
-
-class DcAnnotatedAuthorHobby(enum.Enum):
-    CHESS = "chess"
-    SOCCER = "soccer"
 
 
 def test_get_schema_annotation():
