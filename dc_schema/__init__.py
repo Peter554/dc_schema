@@ -8,14 +8,14 @@ import numbers
 import typing as t
 
 
-MISSING = dataclasses.MISSING
+_MISSING = dataclasses.MISSING
 
 
 def get_schema(dc):
     return _GetSchema()(dc)
 
 
-Format = t.Literal[
+_Format = t.Literal[
     "date-time",
     "time",
     "date",
@@ -43,7 +43,7 @@ def annotation(
     min_length: t.Optional[int] = None,
     max_length: t.Optional[int] = None,
     pattern: t.Optional[str] = None,
-    format_: t.Optional[Format] = None,
+    format_: t.Optional[_Format] = None,
     minimum: t.Optional[numbers.Number] = None,
     maximum: t.Optional[numbers.Number] = None,
     exclusive_minimum: t.Optional[numbers.Number] = None,
@@ -113,7 +113,7 @@ class _GetSchema:
                 type_, field.default, None
             )
             field_is_optional = (
-                field.default is not MISSING or field.default_factory is not MISSING
+                field.default is not _MISSING or field.default_factory is not _MISSING
             )
             if not field_is_optional:
                 schema["required"].append(field.name)
@@ -160,21 +160,21 @@ class _GetSchema:
     def get_union_schema(self, type_, default, extra):
         extra = json.loads(extra) if extra else {}
         args = t.get_args(type_)
-        if default is MISSING:
+        if default is _MISSING:
             return {
-                "anyOf": [self.get_field_schema(arg, MISSING, None) for arg in args],
+                "anyOf": [self.get_field_schema(arg, _MISSING, None) for arg in args],
                 **extra,
             }
         else:
             return {
-                "anyOf": [self.get_field_schema(arg, MISSING, None) for arg in args],
+                "anyOf": [self.get_field_schema(arg, _MISSING, None) for arg in args],
                 "default": default,
                 **extra,
             }
 
     def get_literal_schema(self, type_, default, extra):
         extra = json.loads(extra) if extra else {}
-        if default is MISSING:
+        if default is _MISSING:
             schema = {**extra}
         else:
             schema = {"default": default, **extra}
@@ -189,7 +189,7 @@ class _GetSchema:
             assert args[0] == str
             return {
                 "type": "object",
-                "additionalProperties": self.get_field_schema(args[1], MISSING, None),
+                "additionalProperties": self.get_field_schema(args[1], _MISSING, None),
                 **extra,
             }
         else:
@@ -202,7 +202,7 @@ class _GetSchema:
         if args:
             return {
                 "type": "array",
-                "items": self.get_field_schema(args[0], MISSING, None),
+                "items": self.get_field_schema(args[0], _MISSING, None),
                 **extra,
             }
         else:
@@ -210,7 +210,7 @@ class _GetSchema:
 
     def get_tuple_schema(self, type_, default, extra):
         extra = json.loads(extra) if extra else {}
-        if default is MISSING:
+        if default is _MISSING:
             schema = {**extra}
         else:
             schema = {"default": list(default), **extra}
@@ -218,14 +218,14 @@ class _GetSchema:
         if args and len(args) == 2 and args[1] is ...:
             schema = {
                 "type": "array",
-                "items": self.get_field_schema(args[0], MISSING, None),
+                "items": self.get_field_schema(args[0], _MISSING, None),
                 **schema,
             }
         elif args:
             schema = {
                 "type": "array",
                 "prefixItems": [
-                    self.get_field_schema(arg, MISSING, None) for arg in args
+                    self.get_field_schema(arg, _MISSING, None) for arg in args
                 ],
                 "minItems": len(args),
                 "maxItems": len(args),
@@ -242,7 +242,7 @@ class _GetSchema:
         if args:
             return {
                 "type": "array",
-                "items": self.get_field_schema(args[0], MISSING, None),
+                "items": self.get_field_schema(args[0], _MISSING, None),
                 "uniqueItems": True,
                 **extra,
             }
@@ -251,35 +251,35 @@ class _GetSchema:
 
     def get_none_schema(self, default, extra):
         extra = json.loads(extra) if extra else {}
-        if default is MISSING:
+        if default is _MISSING:
             return {"type": "null", **extra}
         else:
             return {"type": "null", "default": default, **extra}
 
     def get_str_schema(self, default, extra):
         extra = json.loads(extra) if extra else {}
-        if default is MISSING:
+        if default is _MISSING:
             return {"type": "string", **extra}
         else:
             return {"type": "string", "default": default, **extra}
 
     def get_bool_schema(self, default, extra):
         extra = json.loads(extra) if extra else {}
-        if default is MISSING:
+        if default is _MISSING:
             return {"type": "boolean", **extra}
         else:
             return {"type": "boolean", "default": default, **extra}
 
     def get_int_schema(self, default, extra):
         extra = json.loads(extra) if extra else {}
-        if default is MISSING:
+        if default is _MISSING:
             return {"type": "integer", **extra}
         else:
             return {"type": "integer", "default": default, **extra}
 
     def get_number_schema(self, default, extra):
         extra = json.loads(extra) if extra else {}
-        if default is MISSING:
+        if default is _MISSING:
             return {"type": "number", **extra}
         else:
             return {"type": "number", "default": default, **extra}
@@ -291,7 +291,7 @@ class _GetSchema:
                 "title": type_.__name__,
                 "enum": [v.value for v in type_],
             }
-        if default is MISSING:
+        if default is _MISSING:
             return {"allOf": [{"$ref": f"#/$defs/{type_.__name__}"}], **extra}
         else:
             return {
