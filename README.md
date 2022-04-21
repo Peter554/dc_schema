@@ -196,6 +196,17 @@ print(json.dumps(get_schema(User), indent=2))
 
 See the [tests](https://github.com/Peter554/dc_schema/blob/master/tests/test_dc_schema.py) for full example usage.
 
+## CLI
+
+```
+dc_schema <file_path> <dataclass>
+```
+
+e.g.
+
+```
+dc_schema ./schema.py Author
+```
 
 ## Other tools
 
