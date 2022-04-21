@@ -16,7 +16,7 @@ pip install dc-schema
 
 ## Motivation
 
-Create a lightweight, focused solution to generate JSON schema from plain dataclasses. [pydantic](https://pydantic-docs.helpmanual.io/) is a much more mature option, however it also does a lot of other things I didn't want to include here. Deepen my understanding of JSON schema.
+Create a lightweight, focused solution to generate JSON schema from plain dataclasses. [pydantic](https://pydantic-docs.helpmanual.io/) is a much more mature option, however it also does a lot of other things I didn't want to include here. Deepen my understanding of python dataclasses, typing and JSON schema.
 
 ## Usage
 
