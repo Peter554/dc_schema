@@ -9,7 +9,7 @@ from jsonschema.validators import Draft202012Validator
 
 from dc_schema import (
     get_schema,
-    annotation,
+    SchemaAnnotation,
 )
 
 
@@ -334,11 +334,13 @@ def test_get_schema_set():
 
 @dataclasses.dataclass
 class DcStrAnnotated:
-    a: t.Annotated[str, annotation(min_length=3, max_length=5)]
-    b: t.Annotated[str, annotation(format_="date", pattern=r"^\d.*")] = "2000-01-01"
+    a: t.Annotated[str, SchemaAnnotation(min_length=3, max_length=5)]
+    b: t.Annotated[
+        str, SchemaAnnotation(format="date", pattern=r"^\d.*")
+    ] = "2000-01-01"
 
 
-def test_get_schema_str_annotation():
+def test_get_schema_str_SchemaAnnotation():
     schema = get_schema(DcStrAnnotated)
     print(schema)
     Draft202012Validator.check_schema(schema)
@@ -361,15 +363,15 @@ def test_get_schema_str_annotation():
 
 @dataclasses.dataclass
 class DcNumberAnnotated:
-    a: t.Annotated[int, annotation(minimum=1, exclusive_maximum=11)]
-    b: list[t.Annotated[int, annotation(minimum=0)]]
-    c: t.Optional[t.Annotated[int, annotation(minimum=0)]]
+    a: t.Annotated[int, SchemaAnnotation(minimum=1, exclusive_maximum=11)]
+    b: list[t.Annotated[int, SchemaAnnotation(minimum=0)]]
+    c: t.Optional[t.Annotated[int, SchemaAnnotation(minimum=0)]]
     d: t.Annotated[
-        float, annotation(maximum=12, exclusive_minimum=17, multiple_of=5)
+        float, SchemaAnnotation(maximum=12, exclusive_minimum=17, multiple_of=5)
     ] = 33.1
 
 
-def test_get_schema_number_annotation():
+def test_get_schema_number_SchemaAnnotation():
     schema = get_schema(DcNumberAnnotated)
     print(schema)
     Draft202012Validator.check_schema(schema)
@@ -417,7 +419,7 @@ def test_get_schema_date_time():
 
 @dataclasses.dataclass
 class DcAnnotatedBook:
-    title: t.Annotated[str, annotation(title="Title")]
+    title: t.Annotated[str, SchemaAnnotation(title="Title")]
 
 
 class DcAnnotatedAuthorHobby(enum.Enum):
@@ -429,17 +431,21 @@ class DcAnnotatedAuthorHobby(enum.Enum):
 class DcAnnotatedAuthor:
     name: t.Annotated[
         str,
-        annotation(description="the name of the author", examples=["paul", "alice"]),
+        SchemaAnnotation(
+            description="the name of the author", examples=("paul", "alice")
+        ),
     ]
     books: t.Annotated[
         list[DcAnnotatedBook],
-        annotation(description="all the books the author has written"),
+        SchemaAnnotation(description="all the books the author has written"),
     ]
-    hobby: t.Annotated[DcAnnotatedAuthorHobby, annotation(deprecated=True)]
-    age: t.Annotated[t.Union[int, float], annotation(description="age in years")] = 42
+    hobby: t.Annotated[DcAnnotatedAuthorHobby, SchemaAnnotation(deprecated=True)]
+    age: t.Annotated[
+        t.Union[int, float], SchemaAnnotation(description="age in years")
+    ] = 42
 
 
-def test_get_schema_annotation():
+def test_get_schema_SchemaAnnotation():
     schema = get_schema(DcAnnotatedAuthor)
     print(schema)
     Draft202012Validator.check_schema(schema)
