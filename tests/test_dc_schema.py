@@ -536,3 +536,39 @@ def test_get_schema_config():
             }
         },
     }
+
+
+@dataclasses.dataclass
+class DcListAnnotation:
+    a: t.Annotated[
+        list[int], SchemaAnnotation(min_items=3, max_items=5, unique_items=True)
+    ]
+    b: t.Annotated[tuple[float, ...], SchemaAnnotation(min_items=3, max_items=10)] = ()
+
+
+def test_get_schema_list_annotation():
+    schema = get_schema(DcListAnnotation)
+    print(schema)
+    Draft202012Validator.check_schema(schema)
+    assert schema == {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "title": "DcListAnnotation",
+        "properties": {
+            "a": {
+                "type": "array",
+                "items": {"type": "integer"},
+                "minItems": 3,
+                "maxItems": 5,
+                "uniqueItems": True,
+            },
+            "b": {
+                "type": "array",
+                "items": {"type": "number"},
+                "default": [],
+                "minItems": 3,
+                "maxItems": 10,
+            },
+        },
+        "required": ["a"],
+    }

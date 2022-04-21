@@ -48,6 +48,9 @@ class SchemaAnnotation:
     exclusive_minimum: t.Optional[numbers.Number] = None
     exclusive_maximum: t.Optional[numbers.Number] = None
     multiple_of: t.Optional[numbers.Number] = None
+    min_items: t.Optional[int] = None
+    max_items: t.Optional[int] = None
+    unique_items: t.Optional[bool] = None
 
     def schema(self):
         key_map = {
@@ -56,6 +59,9 @@ class SchemaAnnotation:
             "exclusive_minimum": "exclusiveMinimum",
             "exclusive_maximum": "exclusiveMaximum",
             "multiple_of": "multipleOf",
+            "min_items": "minItems",
+            "max_items": "maxItems",
+            "unique_items": "uniqueItems",
         }
         return {
             key_map.get(k, k): v
