@@ -5,7 +5,7 @@ import enum
 import dataclasses
 import numbers
 import typing as t
-
+from types import UnionType
 
 _MISSING = dataclasses.MISSING
 
@@ -132,7 +132,8 @@ class _GetSchema:
     def get_field_schema(self, type_, default, annotation):
         if dataclasses.is_dataclass(type_):
             return self.get_dc_schema(type_, annotation)
-        if t.get_origin(type_) == t.Union:
+        # NOTE: Fixes pydantic dataclass unions
+        if t.get_origin(type_) in (t.Union, UnionType):
             return self.get_union_schema(type_, default, annotation)
         if t.get_origin(type_) == t.Literal:
             return self.get_literal_schema(type_, default, annotation)
@@ -162,6 +163,9 @@ class _GetSchema:
             return self.get_datetime_schema(annotation)
         elif issubclass(type_, datetime.date):
             return self.get_date_schema(annotation)
+        # FIXME: temporary hack
+        elif type_ == t.Any:
+            return {}
         else:
             raise NotImplementedError(f"field type '{type_}' not implemented")
 
@@ -197,7 +201,8 @@ class _GetSchema:
         args = t.get_args(type_)
         assert len(args) in (0, 2)
         if args:
-            assert args[0] == str
+            # FIXME: Could also be enums
+            # assert args[0] == str
             return {
                 "type": "object",
                 "additionalProperties": self.get_field_schema(
@@ -223,6 +228,12 @@ class _GetSchema:
     def get_tuple_schema(self, type_, default, annotation):
         if default is _MISSING:
             schema = {**annotation.schema()}
+        # FIXME: Pydantic dataclasses
+        elif default.__class__.__name__ == 'FieldInfo':
+            if str(default.default) == 'PydanticUndefined':
+                schema = {**annotation.schema()}
+            else:
+                schema = {"default": list(default.default), **annotation.schema()}
         else:
             schema = {"default": list(default), **annotation.schema()}
         args = t.get_args(type_)
