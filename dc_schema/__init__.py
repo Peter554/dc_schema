@@ -155,6 +155,9 @@ class _GetSchema:
             return self.get_bool_schema(default, annotation)
         elif type_ == int:
             return self.get_int_schema(default, annotation)
+        # FIXME: Do not validate Any
+        elif type_ == t.Any:
+            return annotation.schema()
         elif issubclass(type_, numbers.Number):
             return self.get_number_schema(default, annotation)
         elif issubclass(type_, enum.Enum):
@@ -163,9 +166,6 @@ class _GetSchema:
             return self.get_datetime_schema(annotation)
         elif issubclass(type_, datetime.date):
             return self.get_date_schema(annotation)
-        # FIXME: temporary hack
-        elif type_ == t.Any:
-            return {}
         else:
             raise NotImplementedError(f"field type '{type_}' not implemented")
 
