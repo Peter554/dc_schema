@@ -14,7 +14,8 @@ def main():
     )
     args = arg_parser.parse_args()
 
-    exec(open(args.file_path).read(), locals())
+    with open(args.file_path) as r:
+        exec(r.read(), locals())
 
     schema = get_schema(locals()[args.dataclass])
     print(json.dumps(schema, indent=2), end=None)

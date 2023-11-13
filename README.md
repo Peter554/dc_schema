@@ -3,16 +3,26 @@
 [![CI](https://github.com/Peter554/dc_schema/actions/workflows/ci.yaml/badge.svg)](https://github.com/Peter554/dc_schema/actions/workflows/ci.yaml)
 [![codecov](https://codecov.io/gh/Peter554/dc_schema/branch/master/graph/badge.svg?token=YLT3N0HWO9)](https://codecov.io/gh/Peter554/dc_schema)
 
-Tiny library to generate [JSON schema](https://json-schema.org/) (2020-12) from python 
+Tiny library to generate [JSON schema](https://json-schema.org/) (2020-12) from python
 [dataclasses](https://docs.python.org/3/library/dataclasses.html). No other dependencies, standard library only.
 
 ```
-pip install dc-schema 
+pip install dc-schema
 ```
+
+## Fork changelog:
+
+### 0.0.9:
+
+- Add handling of typing.Any type
+- Add ability to define `additionalProperties` for dataclasses. See [./tests/test_dc_schema.py](./tests/test_dc_schema.py) for details (`test_schema_additiona_properties_are_not_allowed`).
+- Replace flake8, isort, black with ruff+ruff format.
+- Add .pre-commit-config.yaml with pre-commit hooks: ruff, ruff-format, mypy...
+- If a dataclass has `SchemaConfig` attribute and doesn't have `annotation` attribute, raise a `ValueError`.
 
 ## Assumptions
 
-* python 3.9+ 
+* python 3.9+
 
 ## Motivation
 
@@ -103,7 +113,7 @@ print(json.dumps(get_schema(Author), indent=2))
 ### Annotations
 
 You can use [typing.Annotated](https://docs.python.org/3/library/typing.html#typing.Annotated) + `SchemaAnnotation` to attach
-metadata to the schema, such as field descriptions, examples, validation (min/max length, regex pattern, ...), etc. 
+metadata to the schema, such as field descriptions, examples, validation (min/max length, regex pattern, ...), etc.
 Consult [the code](https://github.com/Peter554/dc_schema/blob/master/dc_schema/__init__.py) for full details.
 
 ```py
@@ -218,4 +228,4 @@ For working with dataclasses or JSON schema:
 
 * https://github.com/konradhalas/dacite - create data classes from dictionaries.
 * https://python-jsonschema.readthedocs.io/en/stable/ - validate an object against a JSON schema.
-* https://json-schema.org/understanding-json-schema/index.html - nice reference for understanding JSON schema. 
+* https://json-schema.org/understanding-json-schema/index.html - nice reference for understanding JSON schema.

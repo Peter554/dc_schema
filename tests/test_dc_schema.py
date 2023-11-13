@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-import datetime
 import dataclasses
-import typing as t
+import datetime  # noqa: TCH003
 import enum
+import typing as t
 
 from jsonschema.validators import Draft202012Validator
 
 from dc_schema import (
-    get_schema,
     SchemaAnnotation,
+    get_schema,
 )
 
 
@@ -570,5 +570,152 @@ def test_get_schema_list_annotation():
                 "maxItems": 10,
             },
         },
+        "required": ["a"],
+    }
+
+
+class EnumStr(enum.Enum):
+    A = "a"
+    B = "b"
+
+
+@dataclasses.dataclass
+class DC:
+    a: EnumStr
+    b: EnumStr = dataclasses.field(default=EnumStr.A)
+    c: EnumStr = dataclasses.field(default_factory=lambda: EnumStr.A)
+
+
+def test_enum_string():
+    schema = get_schema(DC)
+    Draft202012Validator.check_schema(schema)
+    assert schema == {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "title": "DC",
+        "properties": {
+            "a": {
+                "allOf": [{"$ref": "#/$defs/EnumStr"}],
+            },
+            "b": {"allOf": [{"$ref": "#/$defs/EnumStr"}], "default": "a"},
+            "c": {
+                "allOf": [{"$ref": "#/$defs/EnumStr"}],
+            },
+        },
+        "required": ["a"],
+        "$defs": {"EnumStr": {"title": "EnumStr", "enum": ["a", "b"]}},
+    }
+
+
+def test_schema_for_any():
+    @dataclasses.dataclass
+    class DCAny:
+        a: t.Any
+        b: t.Any = None
+        c: t.Any = 1
+        d: t.Any = "s"
+        e: t.Any = dataclasses.field(default_factory=lambda: DC(EnumStr.A))
+        f: t.Any = dataclasses.field(default_factory=lambda: [1, "a"])
+
+    schema = get_schema(DCAny)
+    print(schema)
+    Draft202012Validator.check_schema(schema)
+    assert schema == {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "title": "DCAny",
+        "properties": {
+            "a": {
+                "type": [
+                    "null",
+                    "string",
+                    "boolean",
+                    "integer",
+                    "number",
+                    "object",
+                    "array",
+                ]
+            },
+            "b": {
+                "type": [
+                    "null",
+                    "string",
+                    "boolean",
+                    "integer",
+                    "number",
+                    "object",
+                    "array",
+                ],
+                "default": None,
+            },
+            "c": {
+                "type": [
+                    "null",
+                    "string",
+                    "boolean",
+                    "integer",
+                    "number",
+                    "object",
+                    "array",
+                ],
+                "default": 1,
+            },
+            "d": {
+                "type": [
+                    "null",
+                    "string",
+                    "boolean",
+                    "integer",
+                    "number",
+                    "object",
+                    "array",
+                ],
+                "default": "s",
+            },
+            "e": {
+                "type": [
+                    "null",
+                    "string",
+                    "boolean",
+                    "integer",
+                    "number",
+                    "object",
+                    "array",
+                ]
+            },
+            "f": {
+                "type": [
+                    "null",
+                    "string",
+                    "boolean",
+                    "integer",
+                    "number",
+                    "object",
+                    "array",
+                ]
+            },
+        },
+        "required": ["a"],
+    }
+
+
+def test_schema_additiona_properties_are_not_allowed():
+    @dataclasses.dataclass
+    class DC:
+        a: int
+
+        class SchemaConfig:
+            annotation = SchemaAnnotation(additional_properties=False)
+
+    schema = get_schema(DC)
+    print(schema)
+    Draft202012Validator.check_schema(schema)
+
+    assert schema == {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "title": "DC",
+        "additionalProperties": False,
+        "properties": {"a": {"type": "integer"}},
         "required": ["a"],
     }

@@ -1,11 +1,10 @@
 from __future__ import annotations
 
+import dataclasses
 import datetime
 import enum
-import dataclasses
 import numbers
 import typing as t
-
 
 _MISSING = dataclasses.MISSING
 
@@ -42,7 +41,7 @@ class SchemaAnnotation:
     min_length: t.Optional[int] = None
     max_length: t.Optional[int] = None
     pattern: t.Optional[str] = None
-    format: t.Optional[_Format] = None
+    format: t.Optional[_Format] = None  # noqa: A003
     minimum: t.Optional[numbers.Number] = None
     maximum: t.Optional[numbers.Number] = None
     exclusive_minimum: t.Optional[numbers.Number] = None
@@ -51,6 +50,7 @@ class SchemaAnnotation:
     min_items: t.Optional[int] = None
     max_items: t.Optional[int] = None
     unique_items: t.Optional[bool] = None
+    additional_properties: t.Optional[bool] = None
 
     def schema(self):
         key_map = {
@@ -62,6 +62,7 @@ class SchemaAnnotation:
             "min_items": "minItems",
             "max_items": "maxItems",
             "unique_items": "uniqueItems",
+            "additional_properties": "additionalProperties",
         }
         return {
             key_map.get(k, k): v
@@ -71,7 +72,7 @@ class SchemaAnnotation:
 
 
 class _GetSchema:
-    def __call__(self, dc):
+    def __call__(self, dc):  # noqa: ANN204
         self.root = dc
         self.seen_root = False
 
@@ -104,6 +105,8 @@ class _GetSchema:
 
     def create_dc_schema(self, dc):
         if hasattr(dc, "SchemaConfig"):
+            if not hasattr(dc.SchemaConfig, "annotation"):
+                raise ValueError("SchemaConfig must have an annotation attribute")
             annotation = getattr(dc.SchemaConfig, "annotation", SchemaAnnotation())
         else:
             annotation = SchemaAnnotation()
@@ -154,6 +157,8 @@ class _GetSchema:
             return self.get_bool_schema(default, annotation)
         elif type_ == int:
             return self.get_int_schema(default, annotation)
+        elif type_ == t.Any:
+            return self.get_any_schema(default, annotation)
         elif issubclass(type_, numbers.Number):
             return self.get_number_schema(default, annotation)
         elif issubclass(type_, enum.Enum):
@@ -164,6 +169,23 @@ class _GetSchema:
             return self.get_date_schema(annotation)
         else:
             raise NotImplementedError(f"field type '{type_}' not implemented")
+
+    def get_any_schema(self, default, annotation):
+        ret = {
+            "type": [
+                "null",
+                "string",
+                "boolean",
+                "integer",
+                "number",
+                "object",
+                "array",
+            ],
+            **annotation.schema(),
+        }
+        if default is not _MISSING:
+            ret["default"] = default
+        return ret
 
     def get_union_schema(self, type_, default, annotation):
         args = t.get_args(type_)
@@ -186,18 +208,19 @@ class _GetSchema:
             }
 
     def get_literal_schema(self, type_, default, annotation):
-        if default is _MISSING:
-            schema = {**annotation.schema()}
-        else:
-            schema = {"default": default, **annotation.schema()}
+        schema = (
+            {**annotation.schema()}
+            if default is _MISSING
+            else {"default": default, **annotation.schema()}
+        )
         args = t.get_args(type_)
         return {"enum": list(args), **schema}
 
     def get_dict_schema(self, type_, annotation):
         args = t.get_args(type_)
-        assert len(args) in (0, 2)
+        assert len(args) in (0, 2), args
         if args:
-            assert args[0] == str
+            assert args[0] == str, args
             return {
                 "type": "object",
                 "additionalProperties": self.get_field_schema(
@@ -221,10 +244,11 @@ class _GetSchema:
             return {"type": "array", **annotation.schema()}
 
     def get_tuple_schema(self, type_, default, annotation):
-        if default is _MISSING:
-            schema = {**annotation.schema()}
-        else:
-            schema = {"default": list(default), **annotation.schema()}
+        schema = (
+            {**annotation.schema()}
+            if default is _MISSING
+            else {"default": list(default), **annotation.schema()}
+        )
         args = t.get_args(type_)
         if args and len(args) == 2 and args[1] is ...:
             schema = {
@@ -285,7 +309,6 @@ class _GetSchema:
             return {"type": "integer", "default": default, **annotation.schema()}
 
     def get_number_schema(self, default, annotation):
-
         if default is _MISSING:
             return {"type": "number", **annotation.schema()}
         else:

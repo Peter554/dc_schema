@@ -1,0 +1,43 @@
+extend-select = [
+    "A",   # flake8-builtins
+    "E",   # pycodestyle
+    "F",   # pyflakes
+    "B",
+    "PIE",
+    "TID",
+    "Q",
+    "PYI",
+    "YTT",
+    "ICN",
+    "RUF", # ruff-specific checks
+    "TCH", # flake8-type-checking
+    "SIM", # flake8-simplify
+    "TID", # flake8-tidy-imports
+    "UP",  # pyupgrade
+    "I",   # isort
+    "PT",  # flake8-pytest-style
+    "C4", "ISC", "ANN204", "ANN205", "ANN206"]
+ignore = [
+    # Use `X|Y` for type annotations - this breaks the tests
+    "UP007",
+    # warning: The following rules may cause conflicts when used with the formatter: `ISC001`. To avoid unexpected behavior, we recommend disabling these rules, either by removing them from the `select` or `extend-select` configuration, or adding them to the `ignore` configuration.
+    "ISC001"
+]
+fixable = ["ALL"]
+target-version = "py39"
+exclude = [
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".venv",
+    "__pypackages__",
+    "build",
+    "dist",
+    "__pycache__",
+    ".pytest_cache",
+]
