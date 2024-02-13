@@ -41,6 +41,7 @@ class SchemaAnnotation:
     min_length: t.Optional[int] = None
     max_length: t.Optional[int] = None
     pattern: t.Optional[str] = None
+    pattern_properties: t.Optional[dict] = None
     format: t.Optional[_Format] = None  # noqa: A003
     minimum: t.Optional[numbers.Number] = None
     maximum: t.Optional[numbers.Number] = None
@@ -63,6 +64,7 @@ class SchemaAnnotation:
             "max_items": "maxItems",
             "unique_items": "uniqueItems",
             "additional_properties": "additionalProperties",
+            "pattern_properties": "patternProperties",
         }
         return {
             key_map.get(k, k): v

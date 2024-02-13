@@ -5,6 +5,8 @@ import datetime  # noqa: TCH003
 import enum
 import typing as t
 
+import jsonschema
+import pytest
 from jsonschema.validators import Draft202012Validator
 
 from dc_schema import (
@@ -719,3 +721,51 @@ def test_schema_additiona_properties_are_not_allowed():
         "properties": {"a": {"type": "integer"}},
         "required": ["a"],
     }
+
+
+def test_object_pattern_properties():
+    @dataclasses.dataclass
+    class DC:
+        a: t.Annotated[
+            dict[str, t.Union[int, str]],
+            SchemaAnnotation(
+                pattern_properties={
+                    "^I_.*$": {"type": "integer"},
+                    "^S_.*$": {"type": "string"},
+                }
+            ),
+        ]
+
+    schema = get_schema(DC)
+    print(schema)
+    Draft202012Validator.check_schema(schema)
+
+    assert schema == {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "title": "DC",
+        "properties": {
+            "a": {
+                "type": "object",
+                "additionalProperties": {
+                    "anyOf": [{"type": "integer"}, {"type": "string"}]
+                },
+                "patternProperties": {
+                    "^I_.*$": {"type": "integer"},
+                    "^S_.*$": {"type": "string"},
+                },
+            }
+        },
+        "required": ["a"],
+    }
+
+    # valid
+    jsonschema.validate({"a": {"I_a": 1, "S_b": "foo"}}, schema=schema)
+
+    with pytest.raises(jsonschema.ValidationError):
+        # raises because I_a expects an integer
+        jsonschema.validate({"a": {"I_a": "1", "S_b": "foo"}}, schema=schema)
+
+    with pytest.raises(jsonschema.ValidationError):
+        # raises because S_b expects a string
+        jsonschema.validate({"a": {"S_b": 123}}, schema=schema)

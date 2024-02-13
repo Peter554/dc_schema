@@ -12,9 +12,13 @@ pip install dc-schema
 
 ## Fork changelog:
 
+### 0.0.10:
+
+- Add ability to define `patternProperties` for dataclasses. See [./tests/test_dc_schema.py](./tests/test_dc_schema.py) for details (`test_object_pattern_properties`).
+
 ### 0.0.9:
 
-- Add handling of typing.Any type
+- Add handling of `typing.Any` type
 - Add ability to define `additionalProperties` for dataclasses. See [./tests/test_dc_schema.py](./tests/test_dc_schema.py) for details (`test_schema_additiona_properties_are_not_allowed`).
 - Replace flake8, isort, black with ruff+ruff format.
 - Add .pre-commit-config.yaml with pre-commit hooks: ruff, ruff-format, mypy...
