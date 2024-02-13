@@ -729,10 +729,11 @@ def test_object_pattern_properties():
         a: t.Annotated[
             dict[str, t.Union[int, str]],
             SchemaAnnotation(
+                additional_properties=False,
                 pattern_properties={
                     "^I_.*$": {"type": "integer"},
                     "^S_.*$": {"type": "string"},
-                }
+                },
             ),
         ]
 
@@ -747,9 +748,7 @@ def test_object_pattern_properties():
         "properties": {
             "a": {
                 "type": "object",
-                "additionalProperties": {
-                    "anyOf": [{"type": "integer"}, {"type": "string"}]
-                },
+                "additionalProperties": False,
                 "patternProperties": {
                     "^I_.*$": {"type": "integer"},
                     "^S_.*$": {"type": "string"},
@@ -761,6 +760,10 @@ def test_object_pattern_properties():
 
     # valid
     jsonschema.validate({"a": {"I_a": 1, "S_b": "foo"}}, schema=schema)
+
+    with pytest.raises(jsonschema.ValidationError):
+        # because abc is not defined in pattern_properties
+        jsonschema.validate({"a": {"abc": "1"}}, schema=schema)
 
     with pytest.raises(jsonschema.ValidationError):
         # raises because I_a expects an integer
