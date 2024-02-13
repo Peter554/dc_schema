@@ -7,7 +7,7 @@ Tiny library to generate [JSON schema](https://json-schema.org/) (2020-12) from 
 [dataclasses](https://docs.python.org/3/library/dataclasses.html). No other dependencies, standard library only.
 
 ```
-pip install dc-schema
+pip install warchant-dc-schema
 ```
 
 ## Fork changelog:
